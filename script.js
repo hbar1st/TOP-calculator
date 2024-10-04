@@ -1,5 +1,6 @@
 const clearBtn = document.querySelector('#clear');
 const backspaceBtn = document.querySelector("#backspace");
+const negateBtn = document.querySelector("#negate");
 const resultDiv = document.querySelector('#result');
 const expressionDiv = document.querySelector('#expression');
 const numPadBtns = document.querySelectorAll('#num-pad>button');
@@ -60,8 +61,8 @@ numPadBtns.forEach(btn =>
         if (val === "=") {
             if (operator) {
                 evaluate();
-                return;
             }
+            return;
         } else
             if (val === ".") {
                 if (secondNum.includes(val) ||
@@ -69,7 +70,11 @@ numPadBtns.forEach(btn =>
                     return;
                 }
             }
-        characters.push(val);
+            if (characters[characters.length-1] === ')'){
+                characters.splice(characters.length-2,0,val);
+            } else {
+                characters.push(val);
+            }
 
         if (operator) {
             secondNum += val;
@@ -118,16 +123,24 @@ opPadBtns.forEach(btn =>
             }
             operator = e.target.textContent;
         }
-        characters.push(e.target.textContent);
+        if ( characters[characters.length-1] === '-' ||
+            characters[characters.length-1] === '(') {
+            characters.pop();
+        }
+        if (characters.findLastIndex((el) => el === '(') > characters.findLastIndex((el) => el === ')')) {
+            characters.push(')'); //balance out the parens
+        }
+        characters.push(e.target.textContent);    
         displayExpression(characters);
     }));
+
 
 function isOperator(str) {
     return (str === "+") || (str === "-") || (str === '*') || (str === '/');
 }
 
 backspaceBtn.addEventListener("click", () => {
-    if (secondNum) {
+    if (secondNum !== "") {
         secondNum = secondNum.slice(0, -1);
         characters.pop();
     } else
@@ -135,9 +148,44 @@ backspaceBtn.addEventListener("click", () => {
             operator = null;
             characters.pop();
         } else
-            if (firstNum) {
+            if (firstNum != "") {
                 firstNum = firstNum.slice(0, -1);
                 characters.pop();
             }
+    displayExpression(characters);
+});
+
+function negateStr(numberStr) {
+    let ret = numberStr;
+    if (+numberStr > 0) {
+        ret = "-" + numberStr;
+    } else if (+numberStr < 0) {
+        ret = numberStr.slice(1);
+    }
+    return ret;
+}
+negateBtn.addEventListener("click", () => {
+    const modifyCharacters = num => {
+        let i = characters.findLastIndex(isOperator);
+        if (num < 0) {
+            characters.splice(i + 1, 0, '(','-');
+            characters.push(')');
+        } else {
+            characters.pop();
+            characters.splice(characters.findLastIndex(c => c === '('), 2);
+        }
+    }
+    if (isOperator(characters[characters.length - 1])) {
+        return; // only works on the last number we typed
+    }
+    if (secondNum !== "") {
+        secondNum = negateStr(secondNum);
+        modifyCharacters(+secondNum);
+    } else {
+        if (firstNum !== "") {
+            firstNum = negateStr(firstNum);
+            modifyCharacters(+firstNum);
+        }
+    }
     displayExpression(characters);
 });
