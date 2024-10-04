@@ -4,3 +4,120 @@
     box-sizing: border-box;
 }
 
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100dvh;
+    width: 100vw;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    width: 330px;
+    border: 1px solid black;
+    background-color: #5c5631;
+    box-shadow: 3px 4px 3px 3px black;
+    outline: 3px solid #f69d3c;
+    border-radius: 2%;
+}
+
+#display {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+    border: 8px solid black;
+    color: lightgoldenrodyellow;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 10px;
+    margin: 10px 10px 0px 10px;
+    outline: 2px solid silver;
+}
+
+#spacer {
+    background: repeating-linear-gradient(-45deg,
+            #f69d3c,
+            #f69d3c 2px,
+            transparent 2px,
+            transparent 10px);
+    width: 100%;
+    height: 10px;
+}
+
+#result {
+    font-size: 33px;
+    border: 1px dashed #f69d3c;
+    width: 100%;
+}
+
+#expression {
+    border: 1px dashed #f69d3c;
+    width: 100%;
+}
+
+button {
+    padding: 20px;
+    border-radius: 25%;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: 800;
+    font-size: 30px;
+    max-width: 90px;
+    max-height: 90px;
+    flex: 0 0 auto;
+    width: 70px;
+    aspect-ratio: 1;
+}
+
+#top-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+
+    button {
+        width: 150px;
+        margin-top: 10px;
+        border-radius: 15%;
+        max-width: initial;
+        text-align: center;
+        aspect-ratio: initial;
+    }
+}
+
+#main-pad {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+}
+
+#num-pad {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    margin-bottom: 10px;
+
+    button {
+        background: radial-gradient(#d0e4ec, #ebf8e1, #f69d3c);
+    }
+}
+
+#op-pad {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.colored button {
+    background: radial-gradient(ellipse, #ebf8e1 30%, #d0e4ec 90%, #b9dfef, #b9dfef 97%, #053447 100%);
+}
