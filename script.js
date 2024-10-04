@@ -48,7 +48,7 @@ function operate(op, a, b) {
 
 clearBtn.addEventListener("click", clear);
 
-function clear () {
+function clear() {
     expressionDiv.innerText = "";
     resultDiv.innerText = "";
     characters = [];
@@ -67,7 +67,7 @@ function handleNumPadKeys(val) {
         }
         return;
     }
-    if (characters.length && total && !isOperator(characters[characters.length-1])) {
+    if (secondNum == "" && characters.length && total && !isOperator(characters[characters.length - 1])) {
         clear(); // start a new operation if no operator is present
     }
     if (val === ".") {
@@ -135,22 +135,29 @@ function handleOp(op) {
         return; // do nothing if first thing pressed is operator
     }
     const prevChar = characters[characters.length - 1];
+
     if (isOperator(prevChar)) {
-        operator = op
-        characters.pop();
+        if (op === '-') {
+            // interpret it as a sign flip
+            characters.push('(');
+        } else {
+            operator = op
+            characters.pop();
+        }
     } else {
+
+        if (characters.findLastIndex((el) => el === '(') > characters.findLastIndex((el) => el === ')')) {
+            characters.push(')'); //balance out the parens
+        }
         if (operator) {
             evaluate();
         }
         operator = op;
     }
-    if (characters[characters.length - 1] === '-' ||
-        characters[characters.length - 1] === '(') {
+    if (prevChar === '(') {
         characters.pop();
     }
-    if (characters.findLastIndex((el) => el === '(') > characters.findLastIndex((el) => el === ')')) {
-        characters.push(')'); //balance out the parens
-    }
+
     characters.push(op);
     displayExpression(characters);
 }
@@ -201,7 +208,6 @@ function signFlip() {
     displayExpression(characters);
 }
 
-//TODO: add sign flip support
 document.addEventListener("keydown", (e) => {
     switch (e.key) {
         case "Backspace":
