@@ -104,6 +104,10 @@ button {
     }
 }
 
+#top-buttons button:hover {
+    background: radial-gradient(lightgoldenrodyellow, #f8f0e1 95%, #295f00 100%);
+}
+
 #main-pad {
     display: flex;
     justify-content: center;
@@ -125,6 +129,10 @@ button {
     }
 }
 
+#num-pad button:hover {
+    background: radial-gradient(lightgoldenrodyellow, #f8f0e1 95%, #295f00 100%);
+}
+
 #op-pad {
     display: flex;
     flex-direction: column;
@@ -133,6 +141,9 @@ button {
     gap: 10px;
     margin-right: 10px;
     margin-bottom: 10px;
+    & button:hover {
+        background: radial-gradient(lightgoldenrodyellow, #f8f0e1 95%, #295f00 100%);
+    }
 }
 
 .colored button {
