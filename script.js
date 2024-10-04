@@ -1,3 +1,6 @@
+const clearBtn = document.querySelector('#clear');
+const resultDiv = document.querySelector('#result');
+const expressionDiv = document.querySelector('#expression');
 
 let firstNum;
 let secondNum;
@@ -34,3 +37,8 @@ function operate(op, a, b) {
             break;
     }
 }
+
+clearBtn.addEventListener("click", () => {
+    expressionDiv.innerText = "";
+    resultDiv.innerText = "";
+})
