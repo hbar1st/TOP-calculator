@@ -1,4 +1,5 @@
 const clearBtn = document.querySelector('#clear');
+const backspaceBtn = document.querySelector("#backspace");
 const resultDiv = document.querySelector('#result');
 const expressionDiv = document.querySelector('#expression');
 const numPadBtns = document.querySelectorAll('#num-pad>button');
@@ -26,7 +27,7 @@ function divide(a) {
 // #endregion
 
 function operate(op, a, b) {
-    total = a;
+    total = a ? a : total;
     switch (op) {
         case "+":
             return add(b);
@@ -59,21 +60,24 @@ numPadBtns.forEach(btn =>
         if (val === "=") {
             if (operator) {
                 evaluate();
+                return;
             }
         } else
             if (val === ".") {
-                //TODO
-            } else {
-                characters.push(Number(val));
-
-                if (operator) {
-                    secondNum += val;
-                } else {
-                    firstNum += val;
+                if (secondNum.includes(val) ||
+                    (!secondNum && !operator && firstNum.includes(val))) {
+                    return;
                 }
-
-                displayExpression(characters);
             }
+        characters.push(val);
+
+        if (operator) {
+            secondNum += val;
+        } else {
+            firstNum += val;
+        }
+
+        displayExpression(characters);
 
     })
 );
@@ -87,12 +91,16 @@ function displayResult(value) {
 }
 
 function evaluate() {
-    const result = operate(operator, +firstNum, +secondNum);
-    total = !isNaN(result) ? result : total;
-    firstNum = total;
-    secondNum = "";
-    operator = null;
-    displayResult(total);
+    if (operator === "/" && secondNum === "0") {
+        displayResult("Nope! No thank you!");
+    } else {
+        const result = operate(operator, +firstNum, +secondNum);
+        total = !isNaN(result) ? result : total;
+        firstNum = "";
+        secondNum = "";
+        operator = null;
+        displayResult(total);
+    }
 }
 
 opPadBtns.forEach(btn =>
@@ -118,25 +126,18 @@ function isOperator(str) {
     return (str === "+") || (str === "-") || (str === '*') || (str === '/');
 }
 
-/**
- *         if (operator) {
-
-            const regex = /(\d+)([+\-*\/]{1})(\d+)/;
-            const expression = characters.slice();
-            const matches = expression.join('').match(regex);
-            total = operate(matches[2], firstNum ?? +matches[1], +matches[3]);
-            firstNumber = total;
-            displayResult(total);
-        }
-
-        if (isOperator(characters[characters.length - 1])) {
-            // the last typed value is an operator
-            // so replace the last operator with this new one
+backspaceBtn.addEventListener("click", () => {
+    if (secondNum) {
+        secondNum = secondNum.slice(0, -1);
+        characters.pop();
+    } else
+        if (operator) {
+            operator = null;
             characters.pop();
-        }
-        operator = e.target.textContent;
-        firstNum = characters.slice();
-        characters.push(operator);
-        displayExpression(characters);
-    })
- */
+        } else
+            if (firstNum) {
+                firstNum = firstNum.slice(0, -1);
+                characters.pop();
+            }
+    displayExpression(characters);
+});
