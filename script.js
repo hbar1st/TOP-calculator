@@ -1,6 +1,7 @@
 const clearBtn = document.querySelector('#clear');
 const backspaceBtn = document.querySelector("#backspace");
 const negateBtn = document.querySelector("#negate");
+const mainEl = document.querySelector('main');
 const resultDiv = document.querySelector('#result');
 const expressionDiv = document.querySelector('#expression');
 const numPadBtns = document.querySelectorAll('#num-pad>button');
@@ -45,7 +46,9 @@ function operate(op, a, b) {
     }
 }
 
-clearBtn.addEventListener("click", () => {
+clearBtn.addEventListener("click", clear);
+
+function clear () {
     expressionDiv.innerText = "";
     resultDiv.innerText = "";
     characters = [];
@@ -53,39 +56,40 @@ clearBtn.addEventListener("click", () => {
     secondNum = "";
     operator = null;
     total = null;
-})
-
+}
 numPadBtns.forEach(btn =>
-    btn.addEventListener("click", e => {
-        let val = e.target.textContent;
-        if (val === "=") {
-            if (operator) {
-                evaluate();
-            }
-            return;
-        } else
-            if (val === ".") {
-                if (secondNum.includes(val) ||
-                    (!secondNum && !operator && firstNum.includes(val))) {
-                    return;
-                }
-            }
-            if (characters[characters.length-1] === ')'){
-                characters.splice(characters.length-2,0,val);
-            } else {
-                characters.push(val);
-            }
+    btn.addEventListener("click", e => handleNumPadKeys(e.target.textContent)));
 
+function handleNumPadKeys(val) {
+    if (val === "=") {
         if (operator) {
-            secondNum += val;
-        } else {
-            firstNum += val;
+            evaluate();
         }
+        return;
+    }
+    if (characters.length && total && !isOperator(characters[characters.length-1])) {
+        clear(); // start a new operation if no operator is present
+    }
+    if (val === ".") {
+        if (secondNum.includes(val) ||
+            (!secondNum && !operator && firstNum.includes(val))) {
+            return; // don't register multiple decimals in a number
+        }
+    }
+    if (characters[characters.length - 1] === ')') {
+        characters.splice(characters.length - 2, 0, val);
+    } else {
+        characters.push(val);
+    }
 
-        displayExpression(characters);
+    if (operator) {
+        secondNum += val;
+    } else {
+        firstNum += val;
+    }
 
-    })
-);
+    displayExpression(characters);
+}
 
 function displayExpression(characters) {
     expressionDiv.innerText = characters.join('');
@@ -108,38 +112,52 @@ function evaluate() {
     }
 }
 
-opPadBtns.forEach(btn =>
-    btn.addEventListener("click", e => {
-        if (characters.length === 0) {
-            return; // do nothing if first thing pressed is operator
-        }
-        const prevChar = characters[characters.length - 1];
-        if (isOperator(prevChar)) {
-            operator = e.target.textContent;
-            characters.pop();
-        } else {
-            if (operator) {
-                evaluate();
-            }
-            operator = e.target.textContent;
-        }
-        if ( characters[characters.length-1] === '-' ||
-            characters[characters.length-1] === '(') {
-            characters.pop();
-        }
-        if (characters.findLastIndex((el) => el === '(') > characters.findLastIndex((el) => el === ')')) {
-            characters.push(')'); //balance out the parens
-        }
-        characters.push(e.target.textContent);    
-        displayExpression(characters);
-    }));
-
-
 function isOperator(str) {
     return (str === "+") || (str === "-") || (str === '*') || (str === '/');
 }
 
-backspaceBtn.addEventListener("click", () => {
+function negateStr(numberStr) {
+    let ret = numberStr;
+    if (+numberStr > 0) {
+        ret = "-" + numberStr;
+    } else if (+numberStr < 0) {
+        ret = numberStr.slice(1);
+    }
+    return ret;
+}
+
+// #region eventListners
+opPadBtns.forEach(btn =>
+    btn.addEventListener("click", e => handleOp(e.target.textContent)));
+
+function handleOp(op) {
+    if (characters.length === 0) {
+        return; // do nothing if first thing pressed is operator
+    }
+    const prevChar = characters[characters.length - 1];
+    if (isOperator(prevChar)) {
+        operator = op
+        characters.pop();
+    } else {
+        if (operator) {
+            evaluate();
+        }
+        operator = op;
+    }
+    if (characters[characters.length - 1] === '-' ||
+        characters[characters.length - 1] === '(') {
+        characters.pop();
+    }
+    if (characters.findLastIndex((el) => el === '(') > characters.findLastIndex((el) => el === ')')) {
+        characters.push(')'); //balance out the parens
+    }
+    characters.push(op);
+    displayExpression(characters);
+}
+
+backspaceBtn.addEventListener("click", backspace);
+
+function backspace() {
     if (secondNum !== "") {
         secondNum = secondNum.slice(0, -1);
         characters.pop();
@@ -153,22 +171,15 @@ backspaceBtn.addEventListener("click", () => {
                 characters.pop();
             }
     displayExpression(characters);
-});
-
-function negateStr(numberStr) {
-    let ret = numberStr;
-    if (+numberStr > 0) {
-        ret = "-" + numberStr;
-    } else if (+numberStr < 0) {
-        ret = numberStr.slice(1);
-    }
-    return ret;
 }
-negateBtn.addEventListener("click", () => {
+
+negateBtn.addEventListener("click", signFlip);
+
+function signFlip() {
     const modifyCharacters = num => {
         let i = characters.findLastIndex(isOperator);
         if (num < 0) {
-            characters.splice(i + 1, 0, '(','-');
+            characters.splice(i + 1, 0, '(', '-');
             characters.push(')');
         } else {
             characters.pop();
@@ -188,4 +199,38 @@ negateBtn.addEventListener("click", () => {
         }
     }
     displayExpression(characters);
+}
+
+//TODO: add sign flip support
+document.addEventListener("keydown", (e) => {
+    switch (e.key) {
+        case "Backspace":
+            backspace();
+            break;
+        case "+":
+        case "-":
+        case "*":
+        case "/":
+            handleOp(e.key);
+            break;
+        case "(":
+        case ")":
+        case "=":
+        case ".":
+        case "0":
+        case "1":
+        case "2":
+        case "3":
+        case "4":
+        case "5":
+        case "6":
+        case "7":
+        case "8":
+        case "9":
+            handleNumPadKeys(e.key);
+            break;
+        default:
+            break;
+    }
 });
+// #endregion
