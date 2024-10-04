@@ -1,10 +1,12 @@
 const clearBtn = document.querySelector('#clear');
 const resultDiv = document.querySelector('#result');
 const expressionDiv = document.querySelector('#expression');
+const numPadBtns = document.querySelectorAll('#num-pad>button');
 
 let firstNum;
 let secondNum;
 let operator;
+let characters = [];
 
 // #region math functions 
 function add (a, b) {
@@ -42,3 +44,18 @@ clearBtn.addEventListener("click", () => {
     expressionDiv.innerText = "";
     resultDiv.innerText = "";
 })
+
+numPadBtns.forEach(btn => {
+    addEventListener("click", (e) => {
+        let val = e.target.textContent;
+        if ( val === "bk" ) {
+            characters.pop();
+        } else
+        if ( val === "." ) {
+            //TODO
+        } else {
+            characters.push(+val);
+        }
+        
+    });
+});
