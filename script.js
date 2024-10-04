@@ -3,9 +3,9 @@ const resultDiv = document.querySelector('#result');
 const expressionDiv = document.querySelector('#expression');
 const numPadBtns = document.querySelectorAll('#num-pad>button');
 
-let firstNum;
-let secondNum;
-let operator;
+let firstNum = null;
+let secondNum = null;
+let operator = null;
 let characters = [];
 
 // #region math functions 
@@ -43,19 +43,28 @@ function operate(op, a, b) {
 clearBtn.addEventListener("click", () => {
     expressionDiv.innerText = "";
     resultDiv.innerText = "";
+    characters = [];
+    firstNum = null;
+    secondNum = null;
+    operator = null;
 })
 
 numPadBtns.forEach(btn => {
-    addEventListener("click", (e) => {
+    btn.addEventListener("click", (e) => {
         let val = e.target.textContent;
-        if ( val === "bk" ) {
-            characters.pop();
+        if ( val === "=" ) {
+            //TODO
         } else
         if ( val === "." ) {
             //TODO
         } else {
-            characters.push(+val);
+            characters.push(Number(val));
+            displayExpression(characters);
         }
         
     });
 });
+
+function displayExpression (characters) {
+    expressionDiv.innerText = characters.join('');
+}
