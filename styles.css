@@ -44,9 +44,44 @@ main {
     text-align: right;
     gap: 2px;
 
-    #result, #expression {
+    #result,
+    #expression {
         white-space: nowrap;
+        scrollbar-color: #192A3B #D0E4EC;
+
+        /* Chrome, Edge and Safari */
+        &::-webkit-scrollbar {
+            height: 7px;
+            width: 7px;
+        }
+
+        &::-webkit-scrollbar-track {
+            border-radius: 3px;
+            background-color: #D0E4EC;
+        }
+
+        &::-webkit-scrollbar-track:hover {
+            background-color: #B9DFEF;
+        }
+
+        &::-webkit-scrollbar-track:active {
+            background-color: #F8F0E1;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: 5px;
+            background-color: #192A3B;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: #4D80B3;
+        }
+
+        &::-webkit-scrollbar-thumb:active {
+            background-color: #A6BFD9;
+        }
     }
+
 }
 
 #backspace {
@@ -175,3 +210,14 @@ button {
     background: radial-gradient(lightgoldenrodyellow, #f8f0e1 95%, #295f00 100%);
 
 }
+
+/** #region scroll bar settings **/
+/* Firefox (uncomment to work in Firefox, although other properties will not work!)  */
+/** {
+  scrollbar-width: thin;
+  scrollbar-color: #192A3B #D0E4EC;
+
+
+
+
+/** #endregion **/

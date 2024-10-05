@@ -100,7 +100,7 @@ function displayResult(value) {
 }
 
 function evaluate() {
-    if (operator === "/" && !secondNum) {
+    if (operator === "/" && (secondNum === "0" || secondNum === "")) {
         displayResult("Nope! No thank you!");
     } else {
         const result = operate(operator, +firstNum, +secondNum);
