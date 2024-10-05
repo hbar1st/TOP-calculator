@@ -46,6 +46,9 @@ main {
 
     #result,
     #expression {
+        display: flex;
+        flex-direction: row-reverse;
+        
         white-space: nowrap;
         scrollbar-color: #192A3B #D0E4EC;
 
